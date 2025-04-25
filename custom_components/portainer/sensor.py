@@ -19,6 +19,7 @@ from homeassistant.helpers.typing import StateType
 
 from custom_components.portainer.const import DOMAIN
 
+from .const import CUSTOM_ATTRIBUTE_ARRAY
 from .coordinator import PortainerCoordinator
 from .entity import PortainerEntity, async_create_sensors
 from .sensor_types import SENSOR_SERVICES, SENSOR_TYPES  # noqa: F401
@@ -155,3 +156,15 @@ class ContainerSensor(PortainerSensor):
                 self.description.ha_group = self.coordinator.data["endpoints"][
                     self._data[dev_group]
                 ]["Name"]
+
+    @property
+    def native_value(self) -> StateType | date | datetime | Decimal:
+        """Return the value reported by the sensor."""
+        value = self._data[self.description.data_attribute]
+        if (
+            value == "running"
+            and "Health_Status" in self._data[CUSTOM_ATTRIBUTE_ARRAY]
+            and self._data[CUSTOM_ATTRIBUTE_ARRAY]["Health_Status"] in ["healthy", "starting", "unhealthy"]
+        ):
+            return value + " (" + self._data[CUSTOM_ATTRIBUTE_ARRAY]["Health_Status"] + ")"
+        return value
