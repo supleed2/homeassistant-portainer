@@ -163,9 +163,14 @@ class PortainerEntity(CoordinatorEntity[PortainerCoordinator], Entity):
             )
         else:
             # For container sensors, use the environment name as the device group
-            if self.description.func == "ContainerSensor" and "Environment" in self._data:
+            if (
+                self.description.func == "ContainerSensor"
+                and "Environment" in self._data
+            ):
                 dev_group = self._data["Environment"]
-                dev_connection_value = f"{self.coordinator.name}_{dev_group}_{self.get_config_entry_id()}"
+                dev_connection_value = (
+                    f"{self.coordinator.name}_{dev_group}_{self.get_config_entry_id()}"
+                )
 
             return DeviceInfo(
                 connections={(dev_connection, f"{dev_connection_value}")},

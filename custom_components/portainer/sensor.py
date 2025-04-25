@@ -164,7 +164,10 @@ class ContainerSensor(PortainerSensor):
         if (
             value == "running"
             and "Health_Status" in self._data[CUSTOM_ATTRIBUTE_ARRAY]
-            and self._data[CUSTOM_ATTRIBUTE_ARRAY]["Health_Status"] in ["healthy", "starting", "unhealthy"]
+            and self._data[CUSTOM_ATTRIBUTE_ARRAY]["Health_Status"]
+            in ["healthy", "starting", "unhealthy"]
         ):
-            return value + " (" + self._data[CUSTOM_ATTRIBUTE_ARRAY]["Health_Status"] + ")"
+            return (
+                value + " (" + self._data[CUSTOM_ATTRIBUTE_ARRAY]["Health_Status"] + ")"
+            )
         return value
