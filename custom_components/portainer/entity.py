@@ -162,10 +162,17 @@ class PortainerEntity(CoordinatorEntity[PortainerCoordinator], Entity):
                 configuration_url=f"http{'s' if self.coordinator.config_entry.data[CONF_SSL] else ''}://{self.coordinator.config_entry.data[CONF_HOST]}",
             )
         else:
+            # For container sensors, use the environment name as the device group
+            if self.description.func == "ContainerSensor" and "Environment" in self._data:
+                dev_group = self._data["Environment"]
+                dev_connection_value = f"{self.coordinator.name}_{dev_group}_{self.get_config_entry_id()}"
+
             return DeviceInfo(
                 connections={(dev_connection, f"{dev_connection_value}")},
-                default_name=f"{self._inst} {dev_group}",
-                default_manufacturer=f"{self.manufacturer}",
+                identifiers={(dev_connection, f"{dev_connection_value}")},
+                name=f"{self._inst} {dev_group}",
+                manufacturer=f"{self.manufacturer}",
+                sw_version=f"{self.sw_version}",
             )
 
     @property
